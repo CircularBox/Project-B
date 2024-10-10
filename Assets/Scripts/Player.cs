@@ -5,8 +5,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    public float gravity;
     public Vector2 velocity;
+    public float acceleration = 10;
+    public float maxAcceleration = 10;
+    public float maxSpeed = 100;
+    public float distance = 0;
+
+    public float gravity;
     public float jumpForce = 20;
     public float groundHeight = -10;
     public bool isGrounded = false;
@@ -73,6 +78,21 @@ public class Player : MonoBehaviour
             }
         }
 
+        distance += velocity.x * Time.fixedDeltaTime;
+
+        if (isGrounded)
+        {
+            float velocityRate = velocity.x / maxSpeed;
+            acceleration = maxAcceleration * (1 - velocityRate);
+
+            velocity.x += acceleration * Time.fixedDeltaTime;
+            if (velocity.x > maxSpeed)
+            {
+                velocity.x = maxSpeed;
+            }
+        }
+
         transform.position = pos;
+
     }
 }
