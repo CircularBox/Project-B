@@ -71,11 +71,24 @@ public class Player : MonoBehaviour
                 velocity.y += gravity *Time.fixedDeltaTime;
             }
 
-            if (pos.y <= groundHeight)
+            Vector2 raycastOrigin = new Vector2(pos.x + .7f, pos.y);
+            Vector2 raycastDirection = Vector2.up; 
+            float raycastDistance = velocity.y * Time.fixedDeltaTime;
+            RaycastHit2D hit2D = Physics2D.Raycast(raycastOrigin, raycastDirection, raycastDistance);
+
+            if (hit2D.collider != null)
             {
-                pos.y = groundHeight;
-                isGrounded = true;
+                Platform platform = hit2D.collider.GetComponent<Platform>();
+                if (platform != null)
+                {
+                    groundHeight = platform.platformHeight;
+                    pos.y = groundHeight;
+                    velocity.y = 0;
+                    isGrounded = true;
+                }
             }
+            //Debug.DrawRay(raycastOrigin, raycastDirection * raycastDistance, Color.red);
+
         }
 
         distance += velocity.x * Time.fixedDeltaTime;
@@ -90,6 +103,19 @@ public class Player : MonoBehaviour
             {
                 velocity.x = maxSpeed;
             }
+
+            Vector2 raycastOrigin = new Vector2(pos.x - .7f, pos.y);
+            Vector2 raycastDirection = Vector2.up;
+            float raycastDistance = velocity.y * Time.fixedDeltaTime;
+            RaycastHit2D hit2D = Physics2D.Raycast(raycastOrigin, raycastDirection, raycastDistance);
+
+            if (hit2D.collider == null)
+            {
+                isGrounded = false;
+            }
+            Debug.DrawRay(raycastOrigin, raycastDirection * raycastDistance, Color.green);
+
+
         }
 
         transform.position = pos;
