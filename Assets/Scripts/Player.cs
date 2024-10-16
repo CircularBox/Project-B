@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
     public Vector2 velocity;
     public float acceleration = 10;
     public float maxAcceleration = 10;
@@ -18,13 +17,14 @@ public class Player : MonoBehaviour
 
     public bool isHoldingJump = false;
     public float maxJumpTime = 0.5f;
+    public float topSpeedMaxJumpTime = 0.5f;
     public float jumpTime = 0;
-    public float jumpBuffer = 1f; //If the player is close but not quite on the grounnd, they can still jump
+    public float jumpBuffer = 1f; //If the player is close but not quite on the ground, they can still jump
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
 
         if (!isGrounded)
         {
-            if(isHoldingJump)
+            if (isHoldingJump)
             {
                 jumpTime += Time.fixedDeltaTime;
                 if (jumpTime >= maxJumpTime)
@@ -68,11 +68,11 @@ public class Player : MonoBehaviour
             pos.y += velocity.y * Time.fixedDeltaTime;
             if (!isHoldingJump)
             {
-                velocity.y += gravity *Time.fixedDeltaTime;
+                velocity.y += gravity * Time.fixedDeltaTime;
             }
 
             Vector2 raycastOrigin = new Vector2(pos.x + .7f, pos.y);
-            Vector2 raycastDirection = Vector2.up; 
+            Vector2 raycastDirection = Vector2.up;
             float raycastDistance = velocity.y * Time.fixedDeltaTime;
             RaycastHit2D hit2D = Physics2D.Raycast(raycastOrigin, raycastDirection, raycastDistance);
 
@@ -81,14 +81,14 @@ public class Player : MonoBehaviour
                 Platform platform = hit2D.collider.GetComponent<Platform>();
                 if (platform != null)
                 {
-                    groundHeight = platform.platformHeight;
+                    // Adjust the player's position to the top of the platform's collider
+                    groundHeight = platform.GetComponent<Collider2D>().bounds.max.y;
                     pos.y = groundHeight;
                     velocity.y = 0;
                     isGrounded = true;
                 }
             }
             //Debug.DrawRay(raycastOrigin, raycastDirection * raycastDistance, Color.red);
-
         }
 
         distance += velocity.x * Time.fixedDeltaTime;
@@ -97,6 +97,7 @@ public class Player : MonoBehaviour
         {
             float velocityRate = velocity.x / maxSpeed;
             acceleration = maxAcceleration * (1 - velocityRate);
+            maxJumpTime = topSpeedMaxJumpTime * velocityRate;
 
             velocity.x += acceleration * Time.fixedDeltaTime;
             if (velocity.x > maxSpeed)
@@ -113,12 +114,9 @@ public class Player : MonoBehaviour
             {
                 isGrounded = false;
             }
-            Debug.DrawRay(raycastOrigin, raycastDirection * raycastDistance, Color.green);
-
-
+            //Debug.DrawRay(raycastOrigin, raycastDirection * raycastDistance, Color.green);
         }
 
         transform.position = pos;
-
     }
 }

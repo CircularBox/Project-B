@@ -6,6 +6,7 @@ public class Background_Control : MonoBehaviour
 {
 
     public float depth = 1;
+    public float resetDistance = 100;
 
     Player player;
 
@@ -28,9 +29,9 @@ public class Background_Control : MonoBehaviour
         Vector2 pos = transform.position;
         
         pos.x -= realVelocity * Time.fixedDeltaTime;
-        if (pos.x <= -75)
+        if (pos.x <= -50)
         {
-            pos.x = 75;
+            pos.x = resetDistance;
         }
 
 
