@@ -60,7 +60,7 @@ public class UI_Control : MonoBehaviour
 
     public void Quit()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Main Menu");
     }
 
     public void Retry()
